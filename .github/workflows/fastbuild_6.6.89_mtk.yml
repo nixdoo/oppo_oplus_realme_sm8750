@@ -389,20 +389,6 @@ jobs:
           cd common
           wget https://github.com/$GITHUB_REPOSITORY/raw/refs/heads/$GITHUB_REF_NAME/other_patch/cve-2026-43499-rtmutex-6.6.patch
           patch -p1 -F 3 < cve-2026-43499-rtmutex-6.6.patch
-
-      - name: 注入核心精调配置 (符号表/去核心日志)
-        run: |
-          echo "正在注入专属定制参数..."
-          cd kernel_workspace/common
-          CONFIG_FILE="./arch/arm64/configs/gki_defconfig"
-          
-          # 1. 强制补全内核符号表 (兼容高阶模块，原脚本已破除 ABI 校验，可放心加)
-          bash ./scripts/config --file $CONFIG_FILE -e KALLSYMS
-          bash ./scripts/config --file $CONFIG_FILE -e KALLSYMS_ALL
-          
-          # 2. 精准剔除厂商可能遗留的核心调试日志 (去除多余代码，保留必要的)
-          bash ./scripts/config --file $CONFIG_FILE -d SCHED_DEBUG
-          bash ./scripts/config --file $CONFIG_FILE -d DEBUG_MISC
           
       - name: 启用网络功能增强优化配置
         if: inputs.better_net
